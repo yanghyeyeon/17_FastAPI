@@ -26,3 +26,27 @@ class TeacherUpdate(BaseModel):
     is_active: Optional [bool] = None
     nickname: Optional[str] = None
     description: Optional[str] = None
+
+
+
+
+class StudentBase(BaseModel):
+    name: str
+    nickname: Optional[str] = None
+    lunch_menu: Optional[str] = None
+    description: Optional[str] = None
+
+# request 요청 모델
+class StudentCreate(StudentBase):
+    pass
+
+# response 응답 모델
+class StudentResponse(StudentBase):
+    id : int
+    
+# 업데이트할때 사용되는 request 모델
+class StudentUpdate(BaseModel):
+    name: Optional [str] = None
+    nickname: Optional[str] = None
+    lunch_menu: Optional [str] = None
+    description: Optional[str] = None

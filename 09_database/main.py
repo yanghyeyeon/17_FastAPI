@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends
 from database import session_local, engine
-import models, schemas, teacher_crud
+import models, schemas, teacher_crud, student_crud
 from sqlalchemy.orm import Session
 
 models.Base.metadata.create_all(bind = engine)
@@ -118,5 +118,56 @@ async def update_teacher(
 async def delete_teacher(teacher_id:int, db:Session = Depends(get_db)):
     
     teacher_crud.delete_teacher(db, teacher_id)
+    
+    return None
+
+
+
+
+# student 등록
+@app.post("/students", response_model=schemas.StudentResponse)
+async def create_student(
+    student : schemas.StudentCreate, 
+    # 세션 객체를 먼저 생성하기 위해
+    db : Session = Depends(get_db)
+    ):
+    
+    response = student_crud.create_student(db, student)
+    
+    return response
+
+# student 단일 조회
+@app.get("/student/{student_id}", response_model=schemas.StudentResponse)
+async def find_student_by_id(student_id:int, db: Session = Depends(get_db)):
+    
+    db_student = student_crud.get_student_by_id(db, student_id)
+    
+    return db_student
+
+# student 전체 조회
+@app.get("/students", response_model=list[schemas.StudentResponse])
+async def find_all_students(db: Session = Depends(get_db)):
+    
+    all_students = student_crud.get_all_students(db)
+    
+    return all_students
+
+# student 수정
+@app.put("/students/{student_id}", response_model=schemas.StudentResponse)
+async def update_student(
+    student_id:int,
+    student: schemas.StudentUpdate,
+    db: Session = Depends(get_db)
+):
+    
+    updated_student = student_crud.update_student(db, student_id, student)
+    
+    return updated_student
+
+# student 삭제
+@app.delete("/students/{student_id}", status_code=204)
+async def delete_student(student_id:int, db:Session = Depends(get_db)):
+    
+    student_crud.delete_student(db, student_id)
     
     return None
